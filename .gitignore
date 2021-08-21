@@ -5,3 +5,5 @@ obj
 .vs/
 bin
 .DS_Store
+appsettings.json
+appsettings.Development.json
