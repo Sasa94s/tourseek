@@ -1,6 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tourseek-backend.api", "tourseek-backend.api\tourseek-backend.api.csproj", "{98462EC0-C358-43CC-B270-55AFF4D1084C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tourseek_backend.api", "tourseek_backend.api\tourseek_backend.api.csproj", "{98462EC0-C358-43CC-B270-55AFF4D1084C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tourseek_backend.domain", "tourseek_backend.domain\tourseek_backend.domain.csproj", "{B8DCE0EA-4EFB-4338-BDB7-41CCE0982712}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tourseek_backend.repository", "tourseek_backend.repository\tourseek_backend.repository.csproj", "{C83FB0C7-3565-4D74-80E1-63709BA31013}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tourseek_backend.util", "tourseek_backend.util\tourseek_backend.util.csproj", "{FEC3CA72-E8F9-4B9A-9C5D-1FB86EA7321C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "tourseek_backend.services", "tourseek_backend.services\tourseek_backend.services.csproj", "{DF9DC305-281E-4AD2-B603-9BDF2BDFB129}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +20,21 @@ Global
 		{98462EC0-C358-43CC-B270-55AFF4D1084C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98462EC0-C358-43CC-B270-55AFF4D1084C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98462EC0-C358-43CC-B270-55AFF4D1084C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8DCE0EA-4EFB-4338-BDB7-41CCE0982712}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8DCE0EA-4EFB-4338-BDB7-41CCE0982712}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8DCE0EA-4EFB-4338-BDB7-41CCE0982712}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8DCE0EA-4EFB-4338-BDB7-41CCE0982712}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C83FB0C7-3565-4D74-80E1-63709BA31013}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C83FB0C7-3565-4D74-80E1-63709BA31013}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C83FB0C7-3565-4D74-80E1-63709BA31013}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C83FB0C7-3565-4D74-80E1-63709BA31013}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEC3CA72-E8F9-4B9A-9C5D-1FB86EA7321C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEC3CA72-E8F9-4B9A-9C5D-1FB86EA7321C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEC3CA72-E8F9-4B9A-9C5D-1FB86EA7321C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEC3CA72-E8F9-4B9A-9C5D-1FB86EA7321C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF9DC305-281E-4AD2-B603-9BDF2BDFB129}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF9DC305-281E-4AD2-B603-9BDF2BDFB129}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF9DC305-281E-4AD2-B603-9BDF2BDFB129}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF9DC305-281E-4AD2-B603-9BDF2BDFB129}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

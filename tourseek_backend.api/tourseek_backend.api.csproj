@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <UserSecretsId>aspnet-tourseek_backend.api-52A9C28B-F281-4B9D-A574-90C5747069EB</UserSecretsId>
+        <RootNamespace>tourseek_backend.api</RootNamespace>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.9" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.9">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="5.0.9" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Identity.Web" Version="1.1.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.7" />
+        <PackageReference Include="Serilog.AspNetCore" Version="4.1.1-dev-00229" />
+        <PackageReference Include="Serilog.Enrichers.Environment" Version="2.2.1-dev-00787" />
+        <PackageReference Include="Serilog.Enrichers.Thread" Version="3.2.0-dev-00752" />
+        <PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.1-dev-00771" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\tourseek_backend.domain\tourseek_backend.domain.csproj" />
+      <ProjectReference Include="..\tourseek_backend.repository\tourseek_backend.repository.csproj" />
+    </ItemGroup>
+
+</Project>
