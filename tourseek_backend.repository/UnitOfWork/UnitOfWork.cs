@@ -61,12 +61,7 @@ namespace tourseek_backend.repository.UnitOfWork
             if (count % commitCount != 0) return true;
             
             _context.SaveChanges();
-            
-            if (!recreateContext) return true;
-            
-            _context.Dispose();
-            _context = new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>());
-
+                        
             return true;
         }
 
