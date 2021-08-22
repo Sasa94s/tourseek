@@ -7,7 +7,7 @@ COPY ./extensions.sql /docker-entrypoint-initdb.d
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0.400-buster-slim AS base
 WORKDIR /app
-EXPOSE 80
+EXPOSE $PORT
 
 FROM base as build
 WORKDIR /src
