@@ -2,7 +2,7 @@
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 
-namespace tourseek_backend.domain.Core
+namespace tourseek_backend.domain
 {
     public class ApplicationDbContext : DbContext
     {

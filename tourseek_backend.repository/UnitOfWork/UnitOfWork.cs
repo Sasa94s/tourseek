@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using tourseek_backend.domain;
 using tourseek_backend.domain.Core;
 using tourseek_backend.repository.GenericRepository;
 
