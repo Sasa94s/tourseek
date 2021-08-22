@@ -43,4 +43,4 @@ COPY --from=publish /app/publish .
 #CMD ["pwd"]
 #ENTRYPOINT ["dotnet", "--list-sdks"]
 ENTRYPOINT ["dotnet", "tourseek_backend.api.dll"]
-#CMD ASPNETCORE_URLS=https://*:$PORT dotnet tourseek-backend.api.dll
+CMD ASPNETCORE_URLS=https://*:$PORT dotnet tourseek_backend.api.dll
