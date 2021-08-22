@@ -27,7 +27,7 @@ namespace tourseek_backend.domain
         {
             modelBuilder.ApplyConfigurationsFromAssembly(
                 Assembly.GetExecutingAssembly());
-            modelBuilder.HasPostgresExtension("postgis");
+            // modelBuilder.HasPostgresExtension("postgis");
         }
 
         #endregion

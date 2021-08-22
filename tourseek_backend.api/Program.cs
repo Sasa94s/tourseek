@@ -7,12 +7,21 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using tourseek_backend.domain;
-using tourseek_backend.domain.Core;
 
 namespace tourseek_backend.api
 {
     public class Program
     {
+        private static bool IsDevelopment =>
+            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development";
+
+        private static string HTTP =>
+            Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Heroku" ? "http" : "https";
+        public static string HostPort =>
+            IsDevelopment
+                ? "5001"
+                : Environment.GetEnvironmentVariable("PORT");
+
         public static async Task Main(string[] args)
         {
             var configuration = new ConfigurationBuilder()
@@ -53,8 +62,8 @@ namespace tourseek_backend.api
                 .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseUrls($"{HTTP}://+:{HostPort}");
                     webBuilder.UseStartup<Startup>();
-                })
-                .UseSerilog();
+                });
     }
 }
