@@ -1,4 +1,4 @@
-﻿FROM postgres:13.3
+﻿FROM postgres:12
 RUN apt-get update \
     && apt-get install wget -y \
     && apt-get install postgresql-12-postgis-3 -y \
@@ -35,12 +35,12 @@ FROM testing AS publish
 WORKDIR /src/tourseek_backend.api
 RUN dotnet publish -c Release -o /app/publish
 
-FROM publish AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.9-buster-slim AS runtime
 WORKDIR /app
 COPY --from=publish /app/publish .
 
 #CMD ["ls", "-lah"]
 #CMD ["pwd"]
 #ENTRYPOINT ["dotnet", "--list-sdks"]
-ENTRYPOINT ["dotnet", "tourseek_backend.api.dll"]
-CMD ASPNETCORE_URLS=https://*:$PORT dotnet tourseek_backend.api.dll
+ENTRYPOINT ["dotnet", "tourseek_backend.api.dll", "--launch-profile", "Docker"]
+CMD ASPNETCORE_URLS=http://*:$PORT dotnet tourseek_backend.api.dll --launch-profile Docker
