@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using tourseek_backend.domain;
 using tourseek_backend.domain.Core;
 
 namespace tourseek_backend.api
