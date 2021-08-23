@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Extensions.Logging;
+using tourseek_backend.api.Helpers;
 using tourseek_backend.domain;
 using tourseek_backend.domain.Core;
 using tourseek_backend.repository.GenericRepository;
@@ -19,24 +20,29 @@ namespace tourseek_backend.api
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
-            Configuration = configuration;
+            _configuration = configuration;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var configurationService = new ConfigurationService(_configuration, _webHostEnvironment);
             services.AddEntityFrameworkNpgsql().AddDbContext<ApplicationDbContext>(opt =>
-            opt.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), o => o.UseNetTopologySuite())
-                .UseLazyLoadingProxies());
+                opt.UseNpgsql(configurationService.DatabaseConnectionString,
+                        o => o.UseNetTopologySuite())
+                    .UseLazyLoadingProxies());
 
             services.AddControllers();
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddAutoMapper(typeof(Startup));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -45,13 +51,12 @@ namespace tourseek_backend.api
 
             services.AddCors(opt =>
             {
-                opt.AddPolicy("CorsPolicy", policy =>
-                {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200");
-                });
+                opt.AddPolicy("CorsPolicy",
+                    policy => { policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200"); });
             });
-            
-            services.AddSwaggerGen(act => {
+
+            services.AddSwaggerGen(act =>
+            {
                 act.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
@@ -60,14 +65,10 @@ namespace tourseek_backend.api
                 });
             });
 
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile(new MappingProfile());
-            });
+            var config = new MapperConfiguration(cfg => { cfg.AddProfile(new MappingProfile()); });
             var mapper = config.CreateMapper();
             services.AddSingleton(mapper);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,19 +77,13 @@ namespace tourseek_backend.api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                
+
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
-                app.UseSwagger(c =>
-                {
-                    c.SerializeAsV2 = true;
-                });
+                app.UseSwagger(c => { c.SerializeAsV2 = true; });
 
                 // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
                 // specifying the Swagger JSON endpoint.
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "tourseek-backend.api v1");
-                });
+                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "tourseek-backend.api v1"); });
             }
 
             app.UseHttpsRedirection();
@@ -101,10 +96,7 @@ namespace tourseek_backend.api
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
