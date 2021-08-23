@@ -11,11 +11,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v2
-        - name: Build and deploy the Docker image
+        - name: Build and deploy the Docker image to Heroku
           env:
-            Heroku_API_KEY: $
-            Heroku_APP_NAME: $
+            Heroku_Username: ${{ secrets.Heroku_Username }}
+            Heroku_API_KEY: ${{ secrets.Heroku_API_KEY }}
+            APP_NAME: ${{ secrets.Heroku_APP_NAME }}
           run: |
-            docker login --username=_ --password=$Heroku_API_KEY registry.Heroku.com
-            Heroku container:push web -a $Heroku_APP_NAME
-            Heroku container:release web -a $Heroku_APP_NAME
+            printf '$Heroku_Username\n' | echo "$Heroku_API_KEY" | docker login --username=_ --password-stdin registry.heroku.com
+            heroku container:push web -a $APP_NAME
+            heroku container:release web -a $APP_NAME
