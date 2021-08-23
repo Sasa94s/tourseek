@@ -8,6 +8,7 @@ COPY ./extensions.sql /docker-entrypoint-initdb.d
 FROM mcr.microsoft.com/dotnet/sdk:5.0.400-buster-slim AS base
 WORKDIR /app
 EXPOSE $PORT
+ENV ASPNETCORE_URLS=http://*:$PORT
 
 FROM base as build
 WORKDIR /src
@@ -39,8 +40,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0.9-buster-slim AS runtime
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-#CMD ["ls", "-lah"]
-#CMD ["pwd"]
-#ENTRYPOINT ["dotnet", "--list-sdks"]
 ENTRYPOINT ["dotnet", "tourseek_backend.api.dll", "--launch-profile", "Docker"]
-CMD ASPNETCORE_URLS=http://*:$PORT dotnet tourseek_backend.api.dll --launch-profile Docker
