@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using tourseek_backend.domain.Core;
 using tourseek_backend.domain.DTO.RoleDTOs;
 using tourseek_backend.domain.DTO.UserDTOs;
 using tourseek_backend.domain.Entities;
+using tourseek_backend.domain.JwtAuth;
 using tourseek_backend.repository.UnitOfWork;
+using tourseek_backend.util;
 
 namespace tourseek_backend.services.UsersService
 {
@@ -46,7 +48,42 @@ namespace tourseek_backend.services.UsersService
 
         public LoggedInUserDto Authenticate(LoginUserDto userDto)
         {
-            throw new NotImplementedException();
+            string password = userDto.Password;
+
+            if (string.IsNullOrEmpty(userDto.UserName) || string.IsNullOrEmpty(userDto.Password))
+                return null;
+
+            var user = _unit.Repository<ApplicationUser>().Get(x => x.UserName == userDto.UserName)
+                .SingleOrDefault();
+
+            var roles = _userManager.GetRolesAsync(user);
+            ICollection<RoleNameDto> roleNames = new List<RoleNameDto>();
+            foreach (var role in roles.Result)
+            {
+                roleNames.Add(new RoleNameDto
+                {
+                    Name = role
+                });
+            }
+
+
+            // check if username exists
+            if (user == null)
+                return null;
+
+            var signInResult = _signInManager.PasswordSignInAsync(user, password, true, false);
+
+            // check if password is correct
+            if (!signInResult.Result.Succeeded)
+                return null;
+
+            // authentication successful
+            return new LoggedInUserDto
+            {
+                UserID = user.Id,
+                UserName = user.UserName,
+                Roles = roleNames
+            };
         }
 
         public async Task<ApplicationUser> CreateUser(CreateUserDto user)
@@ -89,7 +126,14 @@ namespace tourseek_backend.services.UsersService
 
         public bool SignOut()
         {
-            throw new NotImplementedException();
+            _signInManager.SignOutAsync();
+            JwtToken.RemoveCurrnetToken();
+            Singleton singleton = Singleton.GetInstance;
+
+            if (singleton.JwtToken == string.Empty)
+                return true;
+            else
+                return false;
         }
 
         public async Task<IdentityResult> UnAssignUserRole(string userId, RoleNameDto role)
