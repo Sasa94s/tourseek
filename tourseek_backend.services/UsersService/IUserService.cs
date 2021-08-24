@@ -16,7 +16,6 @@ namespace tourseek_backend.services.UsersService
         public Task<IdentityResult> AssignUserRoles(string userId, ICollection<RoleNameDto> roles);
         public Task<IdentityResult> UnAssignUserRole(string userId, RoleNameDto role);
         public Task<IdentityResult> UnAssignUserRoles(string userId, ICollection<RoleNameDto> roles);
-
         public bool SignOut();
     }
 }
