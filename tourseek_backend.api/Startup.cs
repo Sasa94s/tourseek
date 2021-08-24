@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,12 +8,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Extensions.Logging;
+using System.Text;
 using tourseek_backend.api.Helpers;
 using tourseek_backend.domain;
 using tourseek_backend.domain.Core;
+using tourseek_backend.domain.JwtAuth;
 using tourseek_backend.repository.GenericRepository;
 using tourseek_backend.repository.UnitOfWork;
 
@@ -22,6 +26,11 @@ namespace tourseek_backend.api
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _webHostEnvironment;
+
+        private const string secretKey = "BBAIDf4CZEmxZ2TIGdDJ7w==";
+        public static readonly SymmetricSecurityKey SigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+
+
 
         public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
@@ -64,6 +73,31 @@ namespace tourseek_backend.api
                     Title = "Tourseek Backend"
                 });
             });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Adminstrator", policy => policy.RequireClaim(CustomClaimTypes.Permission, "Admin"));
+            });
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(jwtOptions =>
+            {
+                jwtOptions.SaveToken = true;
+                jwtOptions.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = "https://localhost:44302/",
+                    ValidAudience = "https://localhost:44302/",
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = SigningKey
+                };
+            });
+
 
             var config = new MapperConfiguration(cfg => { cfg.AddProfile(new MappingProfile()); });
             var mapper = config.CreateMapper();
