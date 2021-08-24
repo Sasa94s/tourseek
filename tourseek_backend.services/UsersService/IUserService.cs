@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using tourseek_backend.domain.DTO.RoleDTOs;
+using tourseek_backend.domain.DTO.UserDTOs;
 using tourseek_backend.domain.Entities;
 
 namespace tourseek_backend.services.UsersService

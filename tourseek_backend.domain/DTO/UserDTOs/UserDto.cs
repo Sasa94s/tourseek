@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using tourseek_backend.domain.DTO.RoleDTOs;
 
-namespace GlassStoreCore.BL.DTOs.UsersDtos
+namespace tourseek_backend.domain.DTO.UserDTOs
 {
     public class UserDto
     {

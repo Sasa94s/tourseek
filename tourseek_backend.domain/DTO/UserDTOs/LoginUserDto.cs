@@ -1,4 +1,4 @@
-﻿namespace GlassStoreCore.BL.DTOs.UsersDtos
+﻿namespace tourseek_backend.domain.DTO.UserDTOs
 {
     public class LoginUserDto
     {
