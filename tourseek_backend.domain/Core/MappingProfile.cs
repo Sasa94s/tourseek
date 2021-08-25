@@ -21,6 +21,9 @@ namespace tourseek_backend.domain.Core
                 cfg.CreateMap<UpdateRoleDto, ApplicationRole>().ReverseMap();
                 cfg.CreateMap<ApplicationUserRole, UpdateUserRole>().ReverseMap();
             });
+
+            this.Mapper = config.CreateMapper();
+
         }
     }
 }

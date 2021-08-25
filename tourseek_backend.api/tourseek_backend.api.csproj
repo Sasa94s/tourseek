@@ -31,6 +31,7 @@
     <ItemGroup>
       <ProjectReference Include="..\tourseek_backend.domain\tourseek_backend.domain.csproj" />
       <ProjectReference Include="..\tourseek_backend.repository\tourseek_backend.repository.csproj" />
+      <ProjectReference Include="..\tourseek_backend.services\tourseek_backend.services.csproj" />
     </ItemGroup>
 
 </Project>

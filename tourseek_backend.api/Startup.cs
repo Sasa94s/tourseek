@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,9 +17,11 @@ using System.Text;
 using tourseek_backend.api.Helpers;
 using tourseek_backend.domain;
 using tourseek_backend.domain.Core;
+using tourseek_backend.domain.Entities;
 using tourseek_backend.domain.JwtAuth;
 using tourseek_backend.repository.GenericRepository;
 using tourseek_backend.repository.UnitOfWork;
+using tourseek_backend.services;
 
 namespace tourseek_backend.api
 {
@@ -54,9 +57,21 @@ namespace tourseek_backend.api
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddSingleton<ILoggerFactory, SerilogLoggerFactory>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddTransient<ILoggerFactory, SerilogLoggerFactory>();
+
+            // Entities Services
+            services.AddDependency();
+
+            // Password Config
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+            });
 
             services.AddCors(opt =>
             {
@@ -74,6 +89,9 @@ namespace tourseek_backend.api
                 });
             });
 
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                  .AddRoles<ApplicationRole>()
+                  .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Adminstrator", policy => policy.RequireClaim(CustomClaimTypes.Permission, "Admin"));

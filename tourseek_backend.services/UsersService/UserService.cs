@@ -14,18 +14,18 @@ namespace tourseek_backend.services.UsersService
 {
     public class UserService : IUserService
     {
-        private readonly UnitOfWork _unit;
+        private readonly IUnitOfWork _unit;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly MappingProfile _mapper;
 
-        public UserService(UnitOfWork unit, UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager, MappingProfile mapper)
+        public UserService(IUnitOfWork unit, UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _unit = unit;
             _userManager = userManager;
             _signInManager = signInManager;
-            _mapper = mapper;
+            _mapper = new MappingProfile();
         }
 
         public async Task<IdentityResult> AssignUserRole(string userId, RoleNameDto role)
@@ -98,7 +98,7 @@ namespace tourseek_backend.services.UsersService
 
             if (!result.Succeeded)
             {
-                newUser = null;
+                return null;
             }
 
             foreach (var role in user.Roles)
