@@ -140,6 +140,38 @@ namespace tourseek_backend.api.Controllers
             });
         }
 
+        [HttpDelete("{id}")]
+        public ActionResult<ApplicationUser> DeleteUser(string id)
+        {
+            var selectedUser = _unitOfWork.Repository<ApplicationUser>().GetById(id);
+            if (selectedUser == null)
+            {
+                return NotFound(new OtherJsonResponse
+                {
+                    StatusMessage = "Selected user not found.",
+                    Success = false
+                });
+            }
+
+            var result = _unitOfWork.Repository<ApplicationUser>().Remove(selectedUser);
+
+            if (!result)
+            {
+                return BadRequest(new OtherJsonResponse
+                {
+                    StatusMessage = "Faild to Delete selected user.",
+                    Success = false
+                });
+            }
+
+            return Ok(new OtherJsonResponse
+            {
+                StatusMessage = "Selected user has been deleted succesfully.",
+                Success = true
+            });
+        }
+
+
         [HttpPost]
         public ActionResult<ApplicationUser> Login(LoginUserDto loginUserDto)
         {
@@ -180,6 +212,8 @@ namespace tourseek_backend.api.Controllers
                 Success = true
             });
         }
+
+
 
 
     }
