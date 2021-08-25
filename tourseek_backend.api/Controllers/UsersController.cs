@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
 using tourseek_backend.domain.Core;
 using tourseek_backend.domain.DTO.UserDTOs;
 using tourseek_backend.domain.Entities;
+using tourseek_backend.domain.JwtAuth;
 using tourseek_backend.domain.Validators;
 using tourseek_backend.repository.UnitOfWork;
 using tourseek_backend.services.UsersService;
@@ -134,6 +136,47 @@ namespace tourseek_backend.api.Controllers
             return Ok(new OtherJsonResponse
             {
                 StatusMessage = "Selected user has been updated successfully.",
+                Success = true
+            });
+        }
+
+        [HttpPost]
+        public ActionResult<ApplicationUser> Login(LoginUserDto loginUserDto)
+        {
+            var result = _userService.Authenticate(loginUserDto);
+            var ApiToken = JwtToken.GenerateJwtToken(result);
+
+            if (result == null)
+            {
+                return NotFound(new OtherJsonResponse
+                {
+                    StatusMessage = "Wrong UserName or password.",
+                    Success = false,
+                });
+            }
+            return Ok(new LoginJsonResponse
+            {
+                StatusMessage = "User has logged in successfully.",
+                Success = true,
+                Token = ApiToken,
+            });
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        public ActionResult<ApplicationUser> LogOut()
+        {
+            var result = _userService.SignOut();
+            if (!result)
+                return BadRequest(new OtherJsonResponse
+                {
+                    StatusMessage = "Couldn't Logout.",
+                    Success = false
+                });
+            return Ok(new OtherJsonResponse
+            {
+                StatusMessage = "Logged out successfully.",
                 Success = true
             });
         }
