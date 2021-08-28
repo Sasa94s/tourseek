@@ -1,8 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using tourseek_backend.domain.Core;
 using tourseek_backend.domain.DTO.RoleDTOs;
 using tourseek_backend.domain.Entities;
@@ -57,7 +53,7 @@ namespace tourseek_backend.api.Controllers
 
             if (!result)
             {
-                return BadRequest(new GetJsonResponse
+                return BadRequest(new OtherJsonResponse
                 {
                     StatusMessage = "Couldn't create role.",
                     Success = false
@@ -78,7 +74,7 @@ namespace tourseek_backend.api.Controllers
 
             if (role == null)
             {
-                return NotFound(new GetJsonResponse
+                return NotFound(new OtherJsonResponse
                 {
                     StatusMessage = "Selected role not found.",
                     Success = false
@@ -98,11 +94,10 @@ namespace tourseek_backend.api.Controllers
                 });
             }
 
-            return Ok(new GetJsonResponse
+            return Ok(new OtherJsonResponse
             {
                 StatusMessage = "Selected role has been updated.",
                 Success = true
-
             });
         }
 
