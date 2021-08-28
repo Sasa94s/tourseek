@@ -68,5 +68,40 @@ namespace tourseek_backend.api.Controllers
                 Success = true,
             });
         }
+
+        [HttpPut("{id}")]
+        public ActionResult<ApplicationRole> UpdateRole(UpdateRoleDto roleDto, string id)
+        {
+            var role = _unitOfWork.Repository<ApplicationRole>().GetById(id);
+
+            if (role == null)
+            {
+                return NotFound(new GetJsonResponse
+                {
+                    StatusMessage = "Selected role not found.",
+                    Success = false
+                });
+            }
+
+            _mapper.Mapper.Map(roleDto, role);
+
+            var result = _unitOfWork.Repository<ApplicationRole>().Update(role);
+
+            if (!result)
+            {
+                return BadRequest(new OtherJsonResponse
+                {
+                    StatusMessage = "Couldn't update selected role.",
+                    Success = false
+                });
+            }
+
+            return Ok(new GetJsonResponse
+            {
+                StatusMessage = "Selected role has been updated.",
+                Success = true
+
+            });
+        }
     }
 }
