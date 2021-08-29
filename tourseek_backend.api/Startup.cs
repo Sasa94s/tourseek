@@ -63,7 +63,7 @@ namespace tourseek_backend.api
             services.AddTransient<ILoggerFactory, SerilogLoggerFactory>();
 
             services.AddScoped<IRoleService, RoleService>();
-            
+
             // Entities Services
             services.AddDependency();
 
@@ -117,6 +117,14 @@ namespace tourseek_backend.api
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = SigningKey
                 };
+            });
+
+            //OAuth 
+            services.AddAuthentication()
+                .AddFacebook(facebookOptions =>
+            {
+                facebookOptions.AppId = _configuration["Authentication:Facebook:AppId"];
+                facebookOptions.AppSecret = _configuration["Authentication:Facebook:AppSecret"];
             });
 
 
