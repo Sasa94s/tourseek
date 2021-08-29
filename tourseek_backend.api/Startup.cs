@@ -22,6 +22,7 @@ using tourseek_backend.domain.JwtAuth;
 using tourseek_backend.repository.GenericRepository;
 using tourseek_backend.repository.UnitOfWork;
 using tourseek_backend.services;
+using tourseek_backend.services.RolesService;
 
 namespace tourseek_backend.api
 {
@@ -61,6 +62,8 @@ namespace tourseek_backend.api
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<ILoggerFactory, SerilogLoggerFactory>();
 
+            services.AddScoped<IRoleService, RoleService>();
+            
             // Entities Services
             services.AddDependency();
 

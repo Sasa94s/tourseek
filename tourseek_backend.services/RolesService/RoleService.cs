@@ -1,19 +1,22 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using tourseek_backend.domain.DTO.RoleDTOs;
 using tourseek_backend.domain.Entities;
+using tourseek_backend.domain.Models.Filters;
 using tourseek_backend.repository.GenericRepository;
 using tourseek_backend.repository.UnitOfWork;
 using tourseek_backend.services.Exceptions;
 
 namespace tourseek_backend.services.RolesService
 {
-    public class RoleService : IRoleService
+    public class RoleService : BaseService<ApplicationRole, RoleDto, RoleFilter>, IRoleService
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<ApplicationRole> _repository;
 
-        public RoleService(IMapper mapper, IUnitOfWork unitOfWork)
+        public RoleService(IMapper mapper, IUnitOfWork unitOfWork) : base(unitOfWork)
         {
             _mapper = mapper;
             _repository = unitOfWork.Repository<ApplicationRole>();
@@ -50,6 +53,7 @@ namespace tourseek_backend.services.RolesService
             {
                 throw new RoleNotFoundException("Selected role not found.", HttpStatusCode.NotFound);
             }
+
             _mapper.Map(roleDto, role);
             var result = _repository.Update(role);
             if (!result)
@@ -67,6 +71,7 @@ namespace tourseek_backend.services.RolesService
             {
                 throw new RoleNotFoundException("Selected role not found.", HttpStatusCode.NotFound);
             }
+
             var result = _repository.Remove(role);
             if (!result)
             {
@@ -74,6 +79,18 @@ namespace tourseek_backend.services.RolesService
             }
 
             return "Role has been deleted successfully.";
+        }
+
+        public override IQueryable<RoleDto> QuerySelector(
+            DbSet<ApplicationRole> entities,
+            IQueryable<ApplicationRole> queryable
+        )
+        {
+            return queryable.Select(s => new RoleDto
+            {
+                Id = s.Id,
+                Name = s.Name
+            });
         }
     }
 }

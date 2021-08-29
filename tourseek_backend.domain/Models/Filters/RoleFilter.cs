@@ -1,8 +1,9 @@
-﻿namespace tourseek_backend.domain.DTO.RoleDTOs
+namespace tourseek_backend.domain.Models.Filters
 {
-    public class RoleDto
+    public class RoleFilter
     {
         public string Id { get; set; }
+        
         public string Name { get; set; }
     }
 }
