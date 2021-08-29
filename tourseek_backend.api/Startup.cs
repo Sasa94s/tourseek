@@ -119,13 +119,21 @@ namespace tourseek_backend.api
                 };
             });
 
-            //OAuth 
+            #region SocialOAuth
             services.AddAuthentication()
                 .AddFacebook(facebookOptions =>
-            {
-                facebookOptions.AppId = _configuration["Authentication:Facebook:AppId"];
-                facebookOptions.AppSecret = _configuration["Authentication:Facebook:AppSecret"];
-            });
+                {
+                    facebookOptions.AppId = _configuration["Authentication:Facebook:AppId"];
+                    facebookOptions.AppSecret = _configuration["Authentication:Facebook:AppSecret"];
+                })
+                .AddGoogle(googleOptions =>
+                {
+                    googleOptions.ClientId = _configuration["Authentication:Google:ClientId"];
+                    googleOptions.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
+
+                });
+
+            #endregion
 
 
             var config = new MapperConfiguration(cfg => { cfg.AddProfile(new MappingProfile()); });
