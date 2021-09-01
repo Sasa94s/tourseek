@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using tourseek_backend.api.Helpers;
 using tourseek_backend.domain.DTO.UserDTOs;
 using tourseek_backend.domain.Entities;
 using tourseek_backend.domain.JwtAuth;
@@ -235,6 +237,13 @@ namespace tourseek_backend.api.Controllers
                 StatusMessage = "Logged out successfully.",
                 Success = true
             });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> SendEmail()
+        {
+            await EmailSender.SendEmail();
+            return Ok("Email has been sent");
         }
 
 

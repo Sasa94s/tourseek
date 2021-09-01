@@ -95,7 +95,7 @@ namespace tourseek_backend.api
 
 
             // Authorization Config
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                   .AddRoles<ApplicationRole>()
                   .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddAuthorization(options =>
