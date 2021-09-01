@@ -36,6 +36,9 @@ namespace tourseek_backend.domain
 
             modelBuilder.ApplyConfigurationsFromAssembly(
                 Assembly.GetExecutingAssembly());
+
+            modelBuilder.Entity<ApplicationUser>().HasIndex(u => u.PhoneNumber)
+                .IsUnique();
         }
 
         #endregion

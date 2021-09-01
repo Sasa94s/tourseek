@@ -86,6 +86,48 @@ namespace tourseek_backend.services.UsersService
             };
         }
 
+
+        public LoggedInUserDto AuthenticateUsingPhone(LoginUserDtoPhone userDto)
+        {
+            string password = userDto.Password;
+
+            if (string.IsNullOrEmpty(userDto.Phone) || string.IsNullOrEmpty(userDto.Password))
+                return null;
+
+            var user = _unit.Repository<ApplicationUser>().Get(x => x.PhoneNumber == userDto.Phone)
+                .SingleOrDefault();
+
+
+
+            // check if username exists
+            if (user == null)
+                return null;
+
+            var roles = _userManager.GetRolesAsync(user);
+            ICollection<RoleNameDto> roleNames = new List<RoleNameDto>();
+            foreach (var role in roles.Result)
+            {
+                roleNames.Add(new RoleNameDto
+                {
+                    Name = role
+                });
+            }
+
+            var signInResult = _signInManager.PasswordSignInAsync(user, password, true, false);
+
+            // check if password is correct
+            if (!signInResult.Result.Succeeded)
+                return null;
+
+            // authentication successful
+            return new LoggedInUserDto
+            {
+                UserID = user.Id,
+                UserName = user.UserName,
+                Roles = roleNames
+            };
+        }
+
         public async Task<ApplicationUser> CreateUser(CreateUserDto user)
         {
             var rolesNames = new List<string>();

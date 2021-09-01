@@ -11,6 +11,7 @@ namespace tourseek_backend.services.UsersService
     {
         public Task<ApplicationUser> CreateUser(CreateUserDto user);
         public LoggedInUserDto Authenticate(LoginUserDto userDto);
+        public LoggedInUserDto AuthenticateUsingPhone(LoginUserDtoPhone userDto);
         public Task<List<RoleNameDto>> GetUserRoles(ApplicationUser user);
         public Task<IdentityResult> AssignUserRole(string userId, RoleNameDto role);
         public Task<IdentityResult> AssignUserRoles(string userId, ICollection<RoleNameDto> roles);
