@@ -194,6 +194,30 @@ namespace tourseek_backend.api.Controllers
             });
         }
 
+        [HttpPost]
+        public ActionResult<ApplicationUser> LoginUsingPhone(LoginUserDtoPhone loginUserDto)
+        {
+            var result = _userService.AuthenticateUsingPhone(loginUserDto);
+
+            var ApiToken = JwtToken.GenerateJwtToken(result);
+
+            if (result == null)
+            {
+                return NotFound(new OtherJsonResponse
+                {
+                    StatusMessage = "Wrong UserName or password.",
+                    Success = false,
+                });
+            }
+            return Ok(new LoginJsonResponse
+            {
+                StatusMessage = "User has logged in successfully.",
+                Success = true,
+                Token = ApiToken,
+            });
+        }
+
+
 
         [Authorize]
         [HttpPost]
