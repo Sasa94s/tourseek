@@ -22,9 +22,9 @@ namespace tourseek_backend.api.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ILogger<RolesController> _logger;
-        private readonly RoleService _roleService;
+        private readonly IRoleService _roleService;
 
-        public RolesController(IMapper mapper, ILogger<RolesController> logger, RoleService roleService)
+        public RolesController(IMapper mapper, ILogger<RolesController> logger, IRoleService roleService)
         {
             _mapper = mapper;
             _logger = logger;

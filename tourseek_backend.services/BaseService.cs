@@ -23,7 +23,7 @@ namespace tourseek_backend.services
 
         public abstract IQueryable<TDestination> QuerySelector(DbSet<TSource> entities, IQueryable<TSource> queryable);
 
-        public PagedList<dynamic> GetPagedList(
+        protected PagedList<dynamic> GetPagedList(
             ICollection<string> columns,
             TFilter filter = null,
             PaginationFilter paginationFilter = null
