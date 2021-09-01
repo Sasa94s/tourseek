@@ -50,6 +50,7 @@ namespace tourseek_backend.api
             services.AddEntityFrameworkNpgsql().AddDbContext<ApplicationDbContext>(opt =>
                 opt.UseNpgsql(configurationService.DatabaseConnectionString,
                         o => o.UseNetTopologySuite())
+                    .EnableDetailedErrors()
                     .UseLazyLoadingProxies());
 
             services.AddControllers();

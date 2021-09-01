@@ -32,10 +32,10 @@ namespace tourseek_backend.domain
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.HasPostgresExtension("postgis");  // PostGIS is required to be installed
 
             modelBuilder.ApplyConfigurationsFromAssembly(
                 Assembly.GetExecutingAssembly());
-            //modelBuilder.HasPostgresExtension("postgis");
         }
 
         #endregion

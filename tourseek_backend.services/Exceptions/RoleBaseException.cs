@@ -5,7 +5,7 @@ namespace tourseek_backend.services.Exceptions
 {
     public class RoleBaseException : HttpRequestException
     {
-        public int StatusCode { get; }
+        public new int StatusCode { get; }
 
         public RoleBaseException(string message, HttpStatusCode statusCode) : base(message)
         {
