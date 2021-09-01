@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using tourseek_backend.domain.Core;
 using tourseek_backend.domain.DTO.UserDTOs;
 using tourseek_backend.domain.Entities;
 using tourseek_backend.domain.JwtAuth;
@@ -17,13 +17,13 @@ namespace tourseek_backend.api.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly MappingProfile _mapper;
+        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserService _userService;
         private readonly UserValidator _rules;
-        public UsersController(IUserService userService, IUnitOfWork unitOfWork)
+        public UsersController(IUserService userService, IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _mapper = new MappingProfile();
+            _mapper = mapper;
             _unitOfWork = unitOfWork;
             _userService = userService;
             _rules = new UserValidator();
@@ -74,7 +74,7 @@ namespace tourseek_backend.api.Controllers
                 });
             }
 
-            _mapper.Mapper.Map(userDto, user);
+            _mapper.Map(userDto, user);
 
             var selectedUserRoles = _unitOfWork.Repository<ApplicationUserRole>().Get(r => r.UserId == userDto.Id)
                 .ToList();

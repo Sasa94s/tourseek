@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using tourseek_backend.domain.Core;
 using tourseek_backend.domain.DTO.RoleDTOs;
 using tourseek_backend.domain.DTO.UserDTOs;
 using tourseek_backend.domain.Entities;
 using tourseek_backend.domain.JwtAuth;
 using tourseek_backend.repository.UnitOfWork;
 using tourseek_backend.util;
+using AutoMapper;
 
 namespace tourseek_backend.services.UsersService
 {
@@ -17,15 +17,15 @@ namespace tourseek_backend.services.UsersService
         private readonly IUnitOfWork _unit;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly MappingProfile _mapper;
+        private readonly IMapper _mapper;
 
         public UserService(IUnitOfWork unit, UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager, IMapper mapper)
         {
             _unit = unit;
             _userManager = userManager;
             _signInManager = signInManager;
-            _mapper = new MappingProfile();
+            _mapper = mapper;
         }
 
         public async Task<IdentityResult> AssignUserRole(string userId, RoleNameDto role)
@@ -90,7 +90,7 @@ namespace tourseek_backend.services.UsersService
         {
             var rolesNames = new List<string>();
 
-            var newUser = _mapper.Mapper.Map<CreateUserDto, ApplicationUser>(user);
+            var newUser = _mapper.Map<CreateUserDto, ApplicationUser>(user);
             newUser.NormalizedEmail = newUser.Email.ToUpper();
             newUser.NormalizedUserName = newUser.UserName.ToUpper();
 

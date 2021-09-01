@@ -12,7 +12,7 @@ namespace tourseek_backend.services
         public static IServiceCollection AddDependency(this IServiceCollection services)
         {
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<IRoleService, RoleService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddTransient<IValidator<CreateUserDto>, UserValidator>();
             return services;
         }

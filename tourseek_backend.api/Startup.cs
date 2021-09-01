@@ -1,4 +1,3 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,7 +15,6 @@ using Serilog.Extensions.Logging;
 using System.Text;
 using tourseek_backend.api.Helpers;
 using tourseek_backend.domain;
-using tourseek_backend.domain.Core;
 using tourseek_backend.domain.Entities;
 using tourseek_backend.domain.JwtAuth;
 using tourseek_backend.repository.GenericRepository;
@@ -57,13 +55,15 @@ namespace tourseek_backend.api
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
-            services.AddAutoMapper(typeof(Startup));
+
+            services.AddAutoMapper(typeof(Startup).Assembly);
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddTransient<ILoggerFactory, SerilogLoggerFactory>();
 
-            services.AddScoped<IRoleService, RoleService>();
+            services.AddLogging();
+
 
             // Entities Services
             services.AddDependency();
@@ -93,6 +93,8 @@ namespace tourseek_backend.api
                 });
             });
 
+
+            // Authorization Config
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
                   .AddRoles<ApplicationRole>()
                   .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -136,10 +138,6 @@ namespace tourseek_backend.api
 
             #endregion
 
-
-            var config = new MapperConfiguration(cfg => { cfg.AddProfile(new MappingProfile()); });
-            var mapper = config.CreateMapper();
-            services.AddSingleton(mapper);
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 

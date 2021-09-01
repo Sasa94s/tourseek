@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using tourseek_backend.domain;
-using tourseek_backend.domain.Core;
 using tourseek_backend.domain.Models;
 using tourseek_backend.domain.Models.Filters;
 using tourseek_backend.util.Extensions;
