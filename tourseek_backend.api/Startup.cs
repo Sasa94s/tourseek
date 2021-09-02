@@ -97,7 +97,9 @@ namespace tourseek_backend.api
             // Authorization Config
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                   .AddRoles<ApplicationRole>()
-                  .AddEntityFrameworkStores<ApplicationDbContext>();
+                  .AddEntityFrameworkStores<ApplicationDbContext>()
+                  .AddDefaultTokenProviders();
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Adminstrator", policy => policy.RequireClaim(CustomClaimTypes.Permission, "Admin"));

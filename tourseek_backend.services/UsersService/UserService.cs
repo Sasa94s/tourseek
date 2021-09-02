@@ -9,6 +9,11 @@ using tourseek_backend.domain.JwtAuth;
 using tourseek_backend.repository.UnitOfWork;
 using tourseek_backend.util;
 using AutoMapper;
+using System;
+using Microsoft.Extensions.Configuration;
+using System.Web;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using tourseek_backend.services.EmailServices;
 
 namespace tourseek_backend.services.UsersService
 {
@@ -17,15 +22,19 @@ namespace tourseek_backend.services.UsersService
         private readonly IUnitOfWork _unit;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailSender;
 
         public UserService(IUnitOfWork unit, UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager, IMapper mapper)
+            SignInManager<ApplicationUser> signInManager, IMapper mapper, IConfiguration configuration, IEmailService emailSender)
         {
             _unit = unit;
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
+            _configuration = configuration;
+            _emailSender = emailSender;
         }
 
         public async Task<IdentityResult> AssignUserRole(string userId, RoleNameDto role)
@@ -128,6 +137,27 @@ namespace tourseek_backend.services.UsersService
             };
         }
 
+        public async Task<bool> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
+        {
+
+            if (string.IsNullOrEmpty(confirmEmailDto.Id) || string.IsNullOrEmpty(confirmEmailDto.Token))
+                return false;
+
+            var code = HttpUtility.UrlEncode(confirmEmailDto.Token);
+
+
+            var user = await _userManager.FindByIdAsync(confirmEmailDto.Id);
+            var result = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(confirmEmailDto.Token));
+
+            if (result.Succeeded)
+            {
+                return true;
+            }
+
+            return false;
+
+        }
+
         public async Task<ApplicationUser> CreateUser(CreateUserDto user)
         {
             var rolesNames = new List<string>();
@@ -148,7 +178,26 @@ namespace tourseek_backend.services.UsersService
                 rolesNames.Add(role.Name);
             }
 
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+
+
+            var uriBuilder = new UriBuilder(_configuration["ReturnPaths:ConfirmEmail"]);
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+
+            query["userid"] = newUser.Id;
+            query["token"] = token;
+
+            uriBuilder.Query = query.ToString();
+            var urlString = uriBuilder.ToString();
+
+            var senderEmail = _configuration["ReturnPaths:SenderEmail"];
+
+            await _emailSender.SendEmailAsync(senderEmail, newUser.Email, "Confirm your email address", urlString);
+
+
             await _userManager.AddToRolesAsync(newUser, rolesNames);
+
+
             return newUser;
         }
 

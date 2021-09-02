@@ -61,7 +61,6 @@ namespace tourseek_backend.api.Controllers
             });
         }
 
-
         [HttpPut]
         public ActionResult<ApplicationUser> UpdateUser(UserDto userDto)
         {
@@ -173,7 +172,6 @@ namespace tourseek_backend.api.Controllers
             });
         }
 
-
         [HttpPost]
         public ActionResult<ApplicationUser> Login(LoginUserDto loginUserDto)
         {
@@ -219,8 +217,6 @@ namespace tourseek_backend.api.Controllers
             });
         }
 
-
-
         [Authorize]
         [HttpPost]
         public ActionResult<ApplicationUser> LogOut()
@@ -240,14 +236,25 @@ namespace tourseek_backend.api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> SendEmail()
+        public ActionResult<ApplicationUser> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
-            await EmailSender.SendEmail();
-            return Ok("Email has been sent");
+            var result = _userService.ConfirmEmail(confirmEmailDto).Result;
+
+            if (!result)
+            {
+                return BadRequest(new OtherJsonResponse
+                {
+                    StatusMessage = "Couldn't Confirm Emnail",
+                    Success = false
+                });
+            }
+
+            return Ok(new OtherJsonResponse
+            {
+                StatusMessage = "Email has been confirmed",
+                Success = true
+            });
         }
-
-
-
 
     }
 }
