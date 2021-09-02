@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using tourseek_backend.domain.DTO.RoleDTOs;
 using tourseek_backend.domain.Entities;
+using tourseek_backend.domain.Models;
 using tourseek_backend.domain.Models.Filters;
 using tourseek_backend.repository.GenericRepository;
 using tourseek_backend.repository.UnitOfWork;
@@ -79,6 +80,11 @@ namespace tourseek_backend.services.RolesService
             }
 
             return "Role has been deleted successfully.";
+        }
+
+        public PagedList<dynamic> GetPagedList(string[] getColumns, RoleFilter filter, PaginationFilter paginationFilter)
+        {
+            return base.GetPagedList(getColumns, filter, paginationFilter);
         }
 
         public override IQueryable<RoleDto> QuerySelector(
