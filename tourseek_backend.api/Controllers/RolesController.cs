@@ -30,11 +30,11 @@ namespace tourseek_backend.api.Controllers
             _logger = logger;
             _roleService = roleService;
         }
-        
+
         [HttpGet]
         [Produces(typeof(PagedResponse<dynamic>))]
         public IActionResult GetAll(
-            [FromQuery] RoleQuery query, 
+            [FromQuery] RoleQuery query,
             [FromQuery] PaginationQuery paginationQuery,
             [FromQuery] ColumnsQuery columnsQuery
         )
@@ -77,7 +77,7 @@ namespace tourseek_backend.api.Controllers
                 logger.LogRequest(new Tuple<string, object>("ID", id));
                 var data = _roleService.GetRoleById(id);
                 logger.LogResponse(new Tuple<string, object>("Data", data));
-                return Ok( new GetJsonResponse
+                return Ok(new GetJsonResponse
                 {
                     StatusMessage = "Role has been selected successfully.",
                     Success = true,
@@ -100,7 +100,7 @@ namespace tourseek_backend.api.Controllers
                 logger.LogRequest(new Tuple<string, object>("Role", roleDto));
                 var data = _roleService.CreateRole(roleDto);
                 logger.LogResponse(new Tuple<string, object>("Message", data));
-                return Ok( new GetJsonResponse
+                return Ok(new OtherJsonResponse
                 {
                     StatusMessage = data,
                     Success = true
@@ -119,11 +119,11 @@ namespace tourseek_backend.api.Controllers
             var logger = new LoggerService<RolesController>(_logger, "Roles", "UpdateRole");
             try
             {
-                logger.LogRequest(new Tuple<string, object>("Role", roleDto), 
+                logger.LogRequest(new Tuple<string, object>("Role", roleDto),
                     new Tuple<string, object>("ID", id));
                 var data = _roleService.UpdateRole(roleDto, id);
                 logger.LogResponse(new Tuple<string, object>("Message", data));
-                return Ok( new GetJsonResponse
+                return Ok(new OtherJsonResponse
                 {
                     StatusMessage = data,
                     Success = true
@@ -145,7 +145,7 @@ namespace tourseek_backend.api.Controllers
                 logger.LogRequest(new Tuple<string, object>("ID", id));
                 var data = _roleService.DeleteRole(id);
                 logger.LogResponse(new Tuple<string, object>("Message", data));
-                return Ok( new GetJsonResponse
+                return Ok(new OtherJsonResponse
                 {
                     StatusMessage = data,
                     Success = true
