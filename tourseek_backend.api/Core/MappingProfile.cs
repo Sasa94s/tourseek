@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using tourseek_backend.api.Queries;
+using tourseek_backend.domain.DTO;
 using tourseek_backend.domain.DTO.RoleDTOs;
 using tourseek_backend.domain.DTO.UserDTOs;
 using tourseek_backend.domain.DTO.UserRoleDTOs;
 using tourseek_backend.domain.Entities;
 using tourseek_backend.domain.Models.Filters;
+using tourseek_backend.domain.Models.Responses;
 
 namespace tourseek_backend.api.Core
 {
@@ -22,6 +24,8 @@ namespace tourseek_backend.api.Core
             CreateMap<ApplicationUserRole, UpdateUserRole>().ReverseMap();
             CreateMap<RoleFilter, RoleQuery>().ReverseMap();
             CreateMap<PaginationFilter, PaginationQuery>().ReverseMap();
+            CreateMap<PageOutputMeta, PagedResponse<object>>().ReverseMap();
+
         }
     }
 }
