@@ -13,7 +13,7 @@ namespace tourseek_backend.domain.DTO.UserDTOs
         public string PhoneNumber { get; set; }
         public DateTime CreatedOn { get; set; }
 
-        public ICollection<RoleNameDto> Roles { get; set; }
+        public ICollection<string> Roles { get; set; }
 
     }
 }

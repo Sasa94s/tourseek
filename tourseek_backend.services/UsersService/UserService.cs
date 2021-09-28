@@ -14,10 +14,14 @@ using Microsoft.Extensions.Configuration;
 using System.Web;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using tourseek_backend.services.EmailServices;
+using tourseek_backend.domain.Models.Filters;
+using tourseek_backend.domain.Models;
+using Microsoft.EntityFrameworkCore;
+using tourseek_backend.services.RolesService;
 
 namespace tourseek_backend.services.UsersService
 {
-    public class UserService : IUserService
+    public class UserService : BaseService<ApplicationUser, UserDto, UserFilter>, IUserService
     {
         private readonly IUnitOfWork _unit;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -27,7 +31,7 @@ namespace tourseek_backend.services.UsersService
         private readonly IEmailService _emailSender;
 
         public UserService(IUnitOfWork unit, UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager, IMapper mapper, IConfiguration configuration, IEmailService emailSender)
+            SignInManager<ApplicationUser> signInManager, IMapper mapper, IConfiguration configuration, IEmailService emailSender) : base(unit)
         {
             _unit = unit;
             _userManager = userManager;
@@ -160,7 +164,8 @@ namespace tourseek_backend.services.UsersService
 
         public async Task<ApplicationUser> CreateUser(CreateUserDto user)
         {
-            var rolesNames = new List<string>();
+
+            ICollection<string> rolesNames = new List<string>();
 
             var newUser = _mapper.Map<CreateUserDto, ApplicationUser>(user);
             newUser.NormalizedEmail = newUser.Email.ToUpper();
@@ -175,44 +180,31 @@ namespace tourseek_backend.services.UsersService
 
             foreach (var role in user.Roles)
             {
-                rolesNames.Add(role.Name);
+                rolesNames.Add(role);
             }
 
-            var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
-
-
-            var uriBuilder = new UriBuilder(_configuration["ReturnPaths:ConfirmEmail"]);
-            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
-
-            query["userid"] = newUser.Id;
-            query["token"] = token;
-
-            uriBuilder.Query = query.ToString();
-            var urlString = uriBuilder.ToString();
-
-            var senderEmail = _configuration["ReturnPaths:SenderEmail"];
-
-            await _emailSender.SendEmailAsync(senderEmail, newUser.Email, "Confirm your email address", urlString);
 
 
             await _userManager.AddToRolesAsync(newUser, rolesNames);
 
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
+            var uriBuilder = new UriBuilder(_configuration["ReturnPaths:ConfirmEmail"]);
+            var query = HttpUtility.ParseQueryString(uriBuilder.Query);
+            query["userid"] = newUser.Id;
+            query["token"] = token;
+            uriBuilder.Query = query.ToString();
+            var urlString = uriBuilder.ToString();
+            var senderEmail = _configuration["ReturnPaths:SenderEmail"];
+            await _emailSender.SendEmailAsync(senderEmail, newUser.Email, "Confirm your email address", urlString);
 
             return newUser;
         }
 
-        public async Task<List<RoleNameDto>> GetUserRoles(ApplicationUser user)
+        public async Task<List<string>> GetUserRoles(string userId)
         {
+            var user = _unit.Repository<ApplicationUser>().GetById(userId);
             var roles = await _userManager.GetRolesAsync(user);
-            var rolesDtos = new List<RoleNameDto>();
-            foreach (var role in roles)
-            {
-                rolesDtos.Add(new RoleNameDto
-                {
-                    Name = role
-                });
-            }
-            return rolesDtos;
+            return roles.ToList();
         }
 
         public bool SignOut()
@@ -242,6 +234,34 @@ namespace tourseek_backend.services.UsersService
             }
             var slectedUser = _userManager.FindByIdAsync(userId).Result;
             return await _userManager.RemoveFromRolesAsync(slectedUser, rolNames);
+        }
+
+        public PagedList<dynamic> GetPagedList(string[] getColumns, UserFilter filter, PaginationFilter paginationFilter)
+        {
+            return base.GetPagedList(getColumns, filter, paginationFilter);
+        }
+
+        public override IQueryable<UserDto> QuerySelector(
+            DbSet<ApplicationUser> entities,
+            IQueryable<ApplicationUser> queryable
+        )
+        {
+            var selectedUser = queryable.Select(s => new UserDto
+            {
+                Id = s.Id,
+                UserName = s.UserName,
+                Email = s.Email,
+                PhoneNumber = s.PhoneNumber,
+                Roles = null
+            });
+
+            var users = selectedUser.ToList();
+            foreach (var user in users)
+            {
+                user.Roles = GetUserRoles(user.Id).Result;
+            }
+
+            return users.AsQueryable();
         }
     }
 }

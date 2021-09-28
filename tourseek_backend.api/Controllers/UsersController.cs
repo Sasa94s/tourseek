@@ -1,15 +1,23 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using tourseek_backend.api.Helpers;
+using tourseek_backend.api.Queries;
+using tourseek_backend.domain.DTO;
 using tourseek_backend.domain.DTO.UserDTOs;
 using tourseek_backend.domain.Entities;
 using tourseek_backend.domain.JwtAuth;
+using tourseek_backend.domain.Models.Filters;
+using tourseek_backend.domain.Models.Responses;
 using tourseek_backend.domain.Validators;
 using tourseek_backend.repository.UnitOfWork;
+using tourseek_backend.services;
+using tourseek_backend.services.RolesService;
 using tourseek_backend.services.UsersService;
 using tourseek_backend.util.JsonResponses;
 
@@ -23,13 +31,15 @@ namespace tourseek_backend.api.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserService _userService;
         private readonly UserValidator _rules;
-        public UsersController(IUserService userService, IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly ILogger<UsersController> _logger;
+
+        public UsersController(IUserService userService, IUnitOfWork unitOfWork, IMapper mapper, ILogger<UsersController> logger)
         {
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _userService = userService;
             _rules = new UserValidator();
-
+            _logger = logger;
         }
 
         [HttpPost]
@@ -95,7 +105,7 @@ namespace tourseek_backend.api.Controllers
             var newRoles = new List<ApplicationRole>();
             foreach (var role in userDto.Roles)
             {
-                newRoles.Add(_unitOfWork.Repository<ApplicationRole>().Get(r => r.Name == role.Name).SingleOrDefault());
+                newRoles.Add(_unitOfWork.Repository<ApplicationRole>().Get(r => r.Name == role).SingleOrDefault());
             }
 
 
@@ -254,6 +264,45 @@ namespace tourseek_backend.api.Controllers
                 StatusMessage = "Email has been confirmed",
                 Success = true
             });
+        }
+
+
+        [HttpGet]
+        [Produces(typeof(PagedResponse<dynamic>))]
+        public IActionResult GetAll(
+            [FromQuery] UserQuery query,
+            [FromQuery] PaginationQuery paginationQuery,
+            [FromQuery] ColumnsQuery columnsQuery
+        )
+        {
+            var logger = new LoggerService<UsersController>(_logger, "Users", "GetAll");
+            PagedResponse<object> response;
+            try
+            {
+                logger.LogRequest(new Tuple<string, object>("Query", query));
+                var filter = _mapper.Map<UserFilter>(query);
+                var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
+                var pagedData = _userService.GetPagedList(columnsQuery.GetColumns(), filter, paginationFilter);
+
+                if (paginationFilter == null || paginationFilter.PageNumber < 1 || paginationFilter.PageSize < 1)
+                {
+                    response = new PagedResponse<object>(pagedData.Data);
+                }
+                else
+                {
+                    response = paginationFilter.CreatePaginatedResponse(pagedData);
+                }
+                var pageOutputMeta = _mapper.Map<PageOutputMeta>(response);
+                logger.LogResponse(new Tuple<string, object>("PageInfo", pageOutputMeta));
+
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e);
+                return BadRequest();
+            }
+
+            return Ok(response);
         }
 
     }

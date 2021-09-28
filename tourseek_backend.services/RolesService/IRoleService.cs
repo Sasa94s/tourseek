@@ -1,4 +1,5 @@
-﻿using tourseek_backend.domain.DTO.RoleDTOs;
+﻿using System.Collections.Generic;
+using tourseek_backend.domain.DTO.RoleDTOs;
 using tourseek_backend.domain.Entities;
 using tourseek_backend.domain.Models;
 using tourseek_backend.domain.Models.Filters;

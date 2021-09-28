@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -16,11 +17,13 @@ namespace tourseek_backend.services.RolesService
     {
         private readonly IMapper _mapper;
         private readonly IGenericRepository<ApplicationRole> _repository;
+        private readonly IGenericRepository<ApplicationUserRole> _userRoleRepository;
 
         public RoleService(IMapper mapper, IUnitOfWork unitOfWork) : base(unitOfWork)
         {
             _mapper = mapper;
             _repository = unitOfWork.Repository<ApplicationRole>();
+            _userRoleRepository = unitOfWork.Repository<ApplicationUserRole>();
         }
 
         public RoleDto GetRoleById(string id)
@@ -38,7 +41,9 @@ namespace tourseek_backend.services.RolesService
         public string CreateRole(RoleDto roleDto)
         {
             var role = _mapper.Map<RoleDto, ApplicationRole>(roleDto);
+            role.NormalizedName = roleDto.Name.ToUpper();
             var result = _repository.Add(role);
+
             if (!result)
             {
                 throw new RoleResultException("Couldn't create selected role.", HttpStatusCode.BadRequest);

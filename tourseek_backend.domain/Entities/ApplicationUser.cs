@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using tourseek_backend.domain.Entities.Base;
 
 namespace tourseek_backend.domain.Entities

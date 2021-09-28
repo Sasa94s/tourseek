@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using tourseek_backend.api.Queries;
 using tourseek_backend.domain.DTO;
 using tourseek_backend.domain.DTO.RoleDTOs;
@@ -23,9 +24,9 @@ namespace tourseek_backend.api.Core
             CreateMap<UpdateRoleDto, ApplicationRole>().ReverseMap();
             CreateMap<ApplicationUserRole, UpdateUserRole>().ReverseMap();
             CreateMap<RoleFilter, RoleQuery>().ReverseMap();
+            CreateMap<UserFilter, UserQuery>().ReverseMap();
             CreateMap<PaginationFilter, PaginationQuery>().ReverseMap();
             CreateMap<PageOutputMeta, PagedResponse<object>>().ReverseMap();
-
         }
     }
 }
