@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using tourseek_backend.domain;
@@ -9,9 +10,10 @@ using tourseek_backend.domain;
 namespace tourseek_backend.domain.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210928124629_Relations")]
+    partial class Relations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -371,6 +373,12 @@ namespace tourseek_backend.domain.Migrations
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUserRole<string>");
 
+                    b.Property<string>("ApplicationRoleId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ApplicationUserId")
+                        .HasColumnType("text");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
@@ -382,6 +390,10 @@ namespace tourseek_backend.domain.Migrations
 
                     b.Property<DateTime>("ModifiedOn")
                         .HasColumnType("timestamp without time zone");
+
+                    b.HasIndex("ApplicationRoleId");
+
+                    b.HasIndex("ApplicationUserId");
 
                     b.HasDiscriminator().HasValue("ApplicationUserRole");
                 });
@@ -435,6 +447,27 @@ namespace tourseek_backend.domain.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("tourseek_backend.domain.Entities.ApplicationUserRole", b =>
+                {
+                    b.HasOne("tourseek_backend.domain.Entities.ApplicationRole", null)
+                        .WithMany("UserRoles")
+                        .HasForeignKey("ApplicationRoleId");
+
+                    b.HasOne("tourseek_backend.domain.Entities.ApplicationUser", null)
+                        .WithMany("UserRoles")
+                        .HasForeignKey("ApplicationUserId");
+                });
+
+            modelBuilder.Entity("tourseek_backend.domain.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("tourseek_backend.domain.Entities.ApplicationRole", b =>
+                {
+                    b.Navigation("UserRoles");
                 });
 #pragma warning restore 612, 618
         }

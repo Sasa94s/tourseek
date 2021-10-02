@@ -11,7 +11,7 @@ namespace tourseek_backend.services
         private readonly string _controller;
         private readonly string _action;
         public Guid ActionId { get; }
-        private ILogger<T> Logger { get; }
+        private ILogger Logger { get; }
 
         public LoggerService(ILogger<T> logger, string controller, string action)
         {

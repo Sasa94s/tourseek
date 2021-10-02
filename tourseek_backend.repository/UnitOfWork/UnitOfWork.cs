@@ -3,7 +3,6 @@ using System.Collections;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using tourseek_backend.domain;
-using tourseek_backend.domain.Core;
 using tourseek_backend.repository.GenericRepository;
 
 namespace tourseek_backend.repository.UnitOfWork
@@ -36,7 +35,7 @@ namespace tourseek_backend.repository.UnitOfWork
                 {
                     return false;
                 }
-                    
+
                 transaction.Commit();
                 return true;
             }
@@ -59,13 +58,8 @@ namespace tourseek_backend.repository.UnitOfWork
             if (!actionsCallback(_context)) return false;
 
             if (count % commitCount != 0) return true;
-            
+
             _context.SaveChanges();
-            
-            if (!recreateContext) return true;
-            
-            _context.Dispose();
-            _context = new ApplicationDbContext(new DbContextOptions<ApplicationDbContext>());
 
             return true;
         }
@@ -85,8 +79,8 @@ namespace tourseek_backend.repository.UnitOfWork
             }
 
             return (IGenericRepository<TEntity>)_repositories[type];
-        }        
-        
+        }
+
         public bool BulkActions(Func<ApplicationDbContext, bool> commitCallback)
         {
             using var transaction = _context.Database.BeginTransaction();
@@ -96,7 +90,7 @@ namespace tourseek_backend.repository.UnitOfWork
                 {
                     return false;
                 }
-                    
+
                 transaction.Commit();
                 return true;
             }

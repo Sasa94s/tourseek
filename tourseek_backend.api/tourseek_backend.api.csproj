@@ -9,6 +9,9 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+        <PackageReference Include="Mailjet.Api" Version="2.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="5.0.9" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="5.0.9" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.9" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.9" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.9" />
@@ -31,6 +34,7 @@
     <ItemGroup>
       <ProjectReference Include="..\tourseek_backend.domain\tourseek_backend.domain.csproj" />
       <ProjectReference Include="..\tourseek_backend.repository\tourseek_backend.repository.csproj" />
+      <ProjectReference Include="..\tourseek_backend.services\tourseek_backend.services.csproj" />
     </ItemGroup>
 
 </Project>

@@ -40,7 +40,4 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0.9-buster-slim AS runtime
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-#CMD ["ls", "-lah"]
-#CMD ["pwd"]
-#ENTRYPOINT ["dotnet", "--list-sdks"]
 ENTRYPOINT ["dotnet", "tourseek_backend.api.dll", "--launch-profile", "Docker"]

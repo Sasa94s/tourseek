@@ -2,7 +2,7 @@
 
 namespace tourseek_backend.domain.Migrations
 {
-    public partial class initmig : Migration
+    public partial class InitialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

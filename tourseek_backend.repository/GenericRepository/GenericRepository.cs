@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using tourseek_backend.domain;
-using tourseek_backend.domain.Core;
 using tourseek_backend.domain.Models;
 using tourseek_backend.domain.Models.Filters;
 using tourseek_backend.util.Extensions;
@@ -61,7 +60,7 @@ namespace tourseek_backend.repository.GenericRepository
             return await Set.AsQueryable().ToListAsync();
         }
 
-        public async Task<Dictionary<TKey,TEntity>> GetAllBindAsync<TKey>(Func<TEntity,TKey> keySelector)
+        public async Task<Dictionary<TKey, TEntity>> GetAllBindAsync<TKey>(Func<TEntity, TKey> keySelector)
         {
             return await Set.AsQueryable().ToDictionaryAsync(keySelector);
         }
@@ -91,14 +90,14 @@ namespace tourseek_backend.repository.GenericRepository
 
             return (await Context.SaveChangesAsync()) > 0;
         }
-        
+
         public bool RemoveById(params object[] id)
         {
             TEntity entity = _context.Set<TEntity>().Find(id);
             _context.Set<TEntity>().Remove(entity);
             return Context.SaveChanges() > 0;
         }
-        
+
         public async Task<bool> RemoveByIdAsync(params object[] id)
         {
             TEntity entity = _context.Set<TEntity>().Find(id);
@@ -123,12 +122,12 @@ namespace tourseek_backend.repository.GenericRepository
 
             return (await Context.SaveChangesAsync()) > 0;
         }
-        
+
         public int GetCountByFilter(Expression<Func<TEntity, bool>> filter)
         {
             return _set.Count(filter);
         }
-        
+
         public TResult GetResultByFilter<TResult>(Expression<Func<TEntity, bool>> filter, Expression<Func<TEntity, TResult>> selector)
         {
             return _set
@@ -176,7 +175,7 @@ namespace tourseek_backend.repository.GenericRepository
         {
             return _set.Max(filter);
         }
-        
+
         public PagedList<TEntity> GetPagedList<TFilter>(
             IFilterableQuery<TEntity, TFilter> queryContext,
             TFilter filter = null,
@@ -186,7 +185,7 @@ namespace tourseek_backend.repository.GenericRepository
             queryable = queryContext.AddInitialFilters(_set, filter, queryable);
 
             var totalRows = queryable.Count();
-            
+
             if (paginationFilter == null)
             {
                 return new PagedList<TEntity>()
@@ -200,7 +199,7 @@ namespace tourseek_backend.repository.GenericRepository
             queryable = queryContext.AddQueryFilters(_set, filter, queryable);
 
             var filteredRows = queryable.Count();
-            
+
             var skip = (paginationFilter.PageNumber - 1) * paginationFilter.PageSize;
 
             if (paginationFilter.Paging)
@@ -215,19 +214,19 @@ namespace tourseek_backend.repository.GenericRepository
                 TotalLength = totalRows,
             };
         }
-        
+
         public PagedList<TMappedEntity> GetPagedList<TMappedEntity, TFilter>(
             IQuery<TEntity, TMappedEntity, TFilter> queryContext,
             TFilter filter = null,
             PaginationFilter paginationFilter = null
-        ) where TFilter : class 
+        ) where TFilter : class
             where TMappedEntity : class
         {
             var queryable = _context.Set<TEntity>().AsQueryable();
             queryable = queryContext.AddInitialFilters(_set, filter, queryable);
 
             var totalRows = queryable.Count();
-            
+
             if (paginationFilter == null)
             {
                 return new PagedList<TMappedEntity>
@@ -243,12 +242,12 @@ namespace tourseek_backend.repository.GenericRepository
             var mappedQueryable = queryContext.QuerySelector(_set, queryable);
             mappedQueryable = queryContext.AddFinalFilters(_set, filter, mappedQueryable);
             var filteredRows = mappedQueryable.Count();
-            
+
             if (paginationFilter.Paging)
             {
                 mappedQueryable = mappedQueryable.Skip(skip).Take(paginationFilter.PageSize);
             }
-            
+
             return new PagedList<TMappedEntity>
             {
                 Data = mappedQueryable.ToList(),
@@ -270,9 +269,9 @@ namespace tourseek_backend.repository.GenericRepository
             {
                 columns = queryable.GetColumnNames().ToArray();
             }
-            
+
             var totalRows = queryable.Count();
-            
+
             if (paginationFilter == null)
             {
                 return new PagedList<dynamic>()
@@ -286,7 +285,7 @@ namespace tourseek_backend.repository.GenericRepository
             queryable = queryContext.AddQueryFilters(_set, filter, queryable);
             var skip = (paginationFilter.PageNumber - 1) * paginationFilter.PageSize;
             var filteredRows = queryable.Count();
-            
+
             if (paginationFilter.Paging)
             {
                 queryable = queryable.Skip(skip).Take(paginationFilter.PageSize);
@@ -299,13 +298,13 @@ namespace tourseek_backend.repository.GenericRepository
                 TotalLength = totalRows,
             };
         }
-        
+
         public async Task<UpdateResult<TResult, TProxyDto>> UpdateBulkAsync<TProxyDto, TFilter, TResult>(
             IUpdatableQuery<TProxyDto, TEntity, TFilter, TResult> queryContext,
             TFilter filter,
             Action<TEntity> action,
             bool singleUpdateFlag = false
-        ) 
+        )
             where TProxyDto : class
             where TFilter : class
         {
@@ -341,7 +340,7 @@ namespace tourseek_backend.repository.GenericRepository
                 EntitiesValuesList = entities.Select(queryContext.BeforeUpdateSelector).ToImmutableList(),
             };
         }
-        
+
         public void BulkInsert(IEnumerable<TEntity> entities, int commitCount, bool recreateContext)
         {
             int count = 0;
@@ -355,14 +354,6 @@ namespace tourseek_backend.repository.GenericRepository
 
                 // save changes <after adding each 100 entity>
                 _context.SaveChanges();
-
-                if (!recreateContext) continue;
-
-                // re-instantiate DbContext <after adding each entity>
-                var dbOptions = _context.DbOptions;
-                _context.Dispose();
-                _context = new ApplicationDbContext(dbOptions);
-                _context.ChangeTracker.AutoDetectChangesEnabled = false;
             }
 
             // save changes for the remainder of 100 entity
